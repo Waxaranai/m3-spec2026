@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="img" aria-labelledby="title desc">
+  <title id="title">Chroma garden</title>
+  <desc id="desc">An abstract green garden with lime, emerald, teal, and amber shapes for testing image color extraction.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#041c13"/>
+      <stop offset="0.55" stop-color="#0a3528"/>
+      <stop offset="1" stop-color="#0d4a3a"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#f7ffb0"/>
+      <stop offset="0.55" stop-color="#c9f76f"/>
+      <stop offset="1" stop-color="#6ee7b7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hillA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2eff2e"/>
+      <stop offset="0.55" stop-color="#0ea56c"/>
+      <stop offset="1" stop-color="#065f46"/>
+    </linearGradient>
+    <linearGradient id="hillB" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#052e16"/>
+      <stop offset="0.6" stop-color="#14532d"/>
+      <stop offset="1" stop-color="#3f6212"/>
+    </linearGradient>
+    <linearGradient id="petal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ecfccb"/>
+      <stop offset="0.45" stop-color="#a3e635"/>
+      <stop offset="1" stop-color="#14b8a6"/>
+    </linearGradient>
+    <radialGradient id="amber" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blurA" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="42"/>
+    </filter>
+    <filter id="blurB" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18"/>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.09"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#sky)"/>
+
+  <!-- atmospheric color fields -->
+  <circle cx="255" cy="725" r="340" fill="#0d9488" opacity="0.38" filter="url(#blurA)"/>
+  <circle cx="1040" cy="180" r="255" fill="#84cc16" opacity="0.25" filter="url(#blurA)"/>
+  <circle cx="800" cy="640" r="230" fill="url(#amber)" opacity="0.5" filter="url(#blurA)"/>
+
+  <!-- sun -->
+  <circle cx="930" cy="210" r="175" fill="url(#sun)"/>
+  <circle cx="930" cy="210" r="82" fill="#f4ffc4" opacity="0.9" filter="url(#blurB)"/>
+
+  <!-- hills -->
+  <path d="M-60 640 C 150 470, 330 520, 500 630 S 840 770, 1260 510 L 1260 920 L -60 920 Z" fill="url(#hillB)"/>
+  <path d="M-80 720 C 170 560, 380 600, 590 720 S 940 820, 1280 660 L 1280 920 L -80 920 Z" fill="url(#hillA)" opacity="0.92"/>
+  <path d="M-40 800 C 220 700, 470 760, 710 815 S 1050 870, 1240 790 L 1240 920 L -40 920 Z" fill="#032b1a" opacity="0.82"/>
+
+  <!-- garden stems and leaves -->
+  <g fill="none" stroke="#bbf7d0" stroke-linecap="round" opacity="0.7">
+    <path d="M250 860 C 240 700, 310 610, 390 530" stroke-width="3"/>
+    <path d="M310 730 C 250 690, 205 690, 155 715" stroke-width="2"/>
+    <path d="M355 630 C 420 595, 468 600, 520 630" stroke-width="2"/>
+    <path d="M720 870 C 700 745, 730 650, 805 585" stroke-width="3"/>
+    <path d="M760 710 C 830 690, 870 700, 915 740" stroke-width="2"/>
+    <path d="M870 860 C 880 780, 925 720, 990 680" stroke-width="2.5"/>
+  </g>
+
+  <g opacity="0.9">
+    <ellipse cx="154" cy="707" rx="58" ry="24" fill="#4ade80" transform="rotate(-24 154 707)" filter="url(#soft)"/>
+    <ellipse cx="520" cy="625" rx="66" ry="26" fill="#22c55e" transform="rotate(17 520 625)" filter="url(#soft)"/>
+    <ellipse cx="918" cy="732" rx="62" ry="24" fill="#86efac" transform="rotate(26 918 732)" filter="url(#soft)"/>
+    <ellipse cx="1000" cy="675" rx="42" ry="18" fill="#2dd4bf" transform="rotate(-15 1000 675)" filter="url(#soft)"/>
+    <ellipse cx="388" cy="525" rx="38" ry="56" fill="#65a30d" transform="rotate(34 388 525)" filter="url(#soft)"/>
+  </g>
+
+  <!-- flower -->
+  <g transform="translate(800 520)">
+    <g fill="url(#petal)" opacity="0.95">
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(0)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(45)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(90)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(135)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(225)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(270)"/>
+      <ellipse cx="0" cy="-118" rx="45" ry="104" transform="rotate(315)"/>
+    </g>
+    <circle r="70" fill="#ecfccb"/>
+    <circle r="48" fill="#facc15" opacity="0.85"/>
+    <circle r="22" fill="#78350f" opacity="0.8"/>
+  </g>
+
+  <!-- floating pollen -->
+  <g fill="#d9f99d">
+    <circle cx="180" cy="260" r="5" opacity="0.8"/>
+    <circle cx="420" cy="170" r="3" opacity="0.6"/>
+    <circle cx="610" cy="300" r="6" opacity="0.7"/>
+    <circle cx="1050" cy="430" r="4" opacity="0.65"/>
+    <circle cx="720" cy="150" r="3" opacity="0.5"/>
+    <circle cx="330" cy="390" r="4" opacity="0.45"/>
+    <circle cx="1130" cy="700" r="6" opacity="0.45"/>
+  </g>
+
+  <!-- quiet horizon line -->
+  <path d="M0 640 H1200" stroke="#d9f99d" stroke-width="1" opacity="0.16"/>
+
+  <rect width="1200" height="900" filter="url(#grain)" opacity="0.55" style="mix-blend-mode:overlay"/>
+</svg>

@@ -1,0 +1,25 @@
+{
+  "name": "m3-spec2026",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Generate device-accurate Material 3 SPEC_2026 color schemes from any image.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@fontsource-variable/instrument-sans": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@material/material-color-utilities": "0.4.0",
+    "fflate": "^0.8.3"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vitest": "5.0.5"
+  }
+}

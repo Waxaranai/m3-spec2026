@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Turn any image into a device-accurate Material 3 SPEC_2026 color scheme: 67 roles, light and dark, tonal palettes, and Kotlin, JSON, CSS, Android XML, or Figma variables exports."
+    />
+    <meta name="theme-color" content="#f9faf2" id="meta-theme-color" />
+    <title>Spec 2026 — Material color studio</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" id="favicon" />
+  </head>
+  <body>
+    <a class="skip-link" href="#studio">Skip to the generator</a>
+
+    <header class="site-header" id="top">
+      <div class="header-inner">
+        <a class="brand" href="#top" aria-label="Spec 2026 home">
+          <span class="brand-mark" aria-hidden="true" id="brand-mark">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <span class="brand-name">spec<span>2026</span></span>
+        </a>
+
+        <nav class="site-nav" aria-label="Sections">
+          <a href="#studio">Studio</a>
+          <a href="#preview">Preview</a>
+          <a href="#roles">Roles</a>
+          <a href="#palettes">Palettes</a>
+          <a href="#export">Export</a>
+        </nav>
+
+        <div class="header-actions">
+          <button class="icon-btn" id="share-btn" type="button" title="Copy a share link" aria-label="Copy a share link"></button>
+          <button class="icon-btn" id="theme-btn" type="button" title="Toggle light or dark" aria-label="Toggle light or dark"></button>
+          <a
+            class="icon-btn github-btn"
+            href="https://github.com/Waxaranai/m3-spec2026"
+            target="_blank"
+            rel="noreferrer"
+            title="View on GitHub"
+            aria-label="View on GitHub"
+          ></a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-grid-bg" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-a" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-b" aria-hidden="true"></div>
+        <div class="hero-inner">
+          <div class="hero-copy">
+            <div class="eyebrow">
+              <span class="live-dot" aria-hidden="true"></span>
+              Material 3 · SPEC_2026 · HCT
+            </div>
+            <h1 id="hero-title">
+              One image.<br />
+              <span class="gradient-text">A whole 2026 palette.</span>
+            </h1>
+            <p class="hero-lede">
+              Drop a photo, choose a seed, and generate the exact Material 3 scheme Android
+              resolves through libmonet. Light, dark, every role, every tonal palette — ready
+              for Kotlin, JSON, CSS, Android XML, or Figma variables.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-filled" id="hero-upload-btn" type="button">
+                <span class="btn-icon" id="hero-upload-icon" aria-hidden="true"></span>
+                Upload an image
+              </button>
+              <button class="btn btn-tonal" id="hero-sample-btn" type="button">
+                <span class="btn-icon" id="hero-sample-icon" aria-hidden="true"></span>
+                Load sample image
+              </button>
+            </div>
+            <dl class="hero-stats">
+              <div><dt>67</dt><dd>roles, light + dark</dd></div>
+              <div><dt>6</dt><dd>tonal palettes</dd></div>
+              <div><dt>5</dt><dd>export formats</dd></div>
+            </dl>
+          </div>
+
+          <div class="hero-art" aria-hidden="true">
+            <div class="hero-ticket">
+              <div class="ticket-top">
+                <span>Seed color</span>
+                <span class="mono" id="hero-seed-label">#2eff2e</span>
+              </div>
+              <div class="ticket-orb-wrap">
+                <div class="ticket-orb" id="hero-orb"></div>
+                <div class="ticket-orb-ring"></div>
+                <div class="ticket-hct" id="hero-hct">HCT 142.71 · 102.52 · 88.11</div>
+              </div>
+              <div class="ticket-rows" id="hero-ticket-rows"></div>
+              <div class="ticket-footer">
+                <span>SchemeTonalSpot</span>
+                <span class="mono">SPEC_2026</span>
+              </div>
+            </div>
+            <div class="hero-palette" id="hero-palette"></div>
+            <div class="hero-sticker" id="hero-sticker">light + dark</div>
+          </div>
+        </div>
+        <div class="role-ribbon" id="role-ribbon" aria-hidden="true"></div>
+      </section>
+
+      <section class="section" id="studio" aria-labelledby="studio-title">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">01 — Source</span>
+            <h2 id="studio-title">Seed your scheme</h2>
+          </div>
+          <p>
+            The quantizer extracts prominent colors locally, then Score ranks them the way
+            Android picks a wallpaper seed. Click a swatch, sample a pixel, or paste a hex.
+          </p>
+        </div>
+
+        <div class="studio-grid">
+          <div class="panel upload-panel" id="upload-panel"></div>
+
+          <div class="panel control-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="mini-label">Settings</span>
+                <h3>Resolve the theme</h3>
+              </div>
+              <span class="badge" id="role-spec-badge">SPEC_2025 roles</span>
+            </div>
+
+            <div class="control-grid">
+              <label class="field" for="style-select">
+                <span class="field-label">Style</span>
+                <span class="select-wrap">
+                  <select id="style-select"></select>
+                  <span class="select-chevron" aria-hidden="true"></span>
+                </span>
+                <small id="style-desc">Calm and balanced. The Android default.</small>
+              </label>
+
+              <div class="field">
+                <span class="field-label">Platform</span>
+                <div class="segmented" id="platform-toggle" role="group" aria-label="Platform">
+                  <button type="button" data-platform="phone" class="is-active">Phone</button>
+                  <button type="button" data-platform="watch">Watch</button>
+                </div>
+                <small>2025 roles use platform-specific tones.</small>
+              </div>
+
+              <label class="field range-field" for="contrast-range">
+                <span class="field-label">
+                  Contrast
+                  <span class="value-pill mono" id="contrast-value">0.0</span>
+                </span>
+                <input id="contrast-range" type="range" min="-1" max="1" step="0.05" value="0" />
+                <span class="range-labels" aria-hidden="true"><span>−1</span><span>0</span><span>+1</span></span>
+              </label>
+            </div>
+
+            <div class="glance-grid" id="glance-grid"></div>
+            <div class="seed-meta" id="seed-meta"></div>
+          </div>
+        </div>
+
+        <div class="spectrum-card panel">
+          <div class="spectrum-head">
+            <span class="mini-label">Role spectrum</span>
+            <span class="mono" id="spectrum-caption">67 roles · light</span>
+          </div>
+          <div class="spectrum" id="spectrum"></div>
+        </div>
+      </section>
+
+      <section class="section" id="preview" aria-labelledby="preview-title">
+        <div class="section-head split">
+          <div>
+            <span class="section-kicker">02 — Preview</span>
+            <h2 id="preview-title">See it in context</h2>
+          </div>
+          <p>Both modes, resolved from the same seed. The page itself uses the active mode.</p>
+        </div>
+        <div class="phone-stage" id="phone-stage"></div>
+      </section>
+
+      <section class="section" id="roles" aria-labelledby="roles-title">
+        <div class="section-head split">
+          <div>
+            <span class="section-kicker">03 — Tokens</span>
+            <h2 id="roles-title">Every role, both modes</h2>
+          </div>
+          <label class="search-field" for="role-search">
+            <span class="search-icon" aria-hidden="true"></span>
+            <input id="role-search" type="search" placeholder="Filter roles…" aria-label="Filter roles" autocomplete="off" spellcheck="false" />
+          </label>
+        </div>
+        <div class="role-table-wrap panel" id="role-table-wrap"></div>
+      </section>
+
+      <section class="section" id="palettes" aria-labelledby="palettes-title">
+        <div class="section-head split">
+          <div>
+            <span class="section-kicker">04 — Palettes</span>
+            <h2 id="palettes-title">The tonal palettes</h2>
+          </div>
+          <p>Click any tone to copy its hex. The tertiary hue is rotated, not simply seed + 60°.</p>
+        </div>
+        <div class="palette-wrap panel">
+          <div class="palette-scroll" id="palette-table"></div>
+        </div>
+        <div class="note-card" id="tertiary-note"></div>
+      </section>
+
+      <section class="section" id="export" aria-labelledby="export-title">
+        <div class="section-head split">
+          <div>
+            <span class="section-kicker">05 — Export</span>
+            <h2 id="export-title">Take it with you</h2>
+          </div>
+          <p>Production-ready output, generated in the browser. Kotlin, JSON, CSS, Android XML, or a Figma variables bundle. Nothing leaves this page.</p>
+        </div>
+        <div class="export-panel panel">
+          <div class="export-head">
+            <div class="export-tabs" id="export-tabs" role="tablist" aria-label="Export format"></div>
+            <div class="export-actions">
+              <span class="mono export-filename" id="export-filename"></span>
+              <button class="icon-btn small" id="copy-export" type="button" title="Copy export" aria-label="Copy export"></button>
+              <button class="icon-btn small" id="download-export" type="button" title="Download export" aria-label="Download export"></button>
+            </div>
+          </div>
+          <pre class="code-block" tabindex="0"><code id="export-code"></code></pre>
+          <p class="export-hint" id="export-hint" hidden></p>
+        </div>
+      </section>
+
+      <section class="notes" aria-labelledby="notes-title">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">Good to know</span>
+            <h2 id="notes-title">The 2026 details</h2>
+          </div>
+        </div>
+        <div class="note-grid">
+          <article class="note">
+            <span class="note-icon" aria-hidden="true" id="note-icon-spec"></span>
+            <h3>Device-accurate fallback</h3>
+            <p>
+              libmonet only applies the SPEC_2026 dynamic-color role spec to the CMF style.
+              TonalSpot falls back to SPEC_2025 roles, while keeping the 2025 palette rules.
+              That is exactly what the reference gist shows.
+            </p>
+          </article>
+          <article class="note">
+            <span class="note-icon" aria-hidden="true" id="note-icon-tertiary"></span>
+            <h3>Tertiary is not +60°</h3>
+            <p>
+              The 2025/2026 TonalSpot tertiary uses a piecewise hue rotation. For the loaded
+              seed it lands on <strong id="note-tertiary-value">110.71°</strong>, which is why a
+              green wallpaper produces yellow-green, not cyan.
+            </p>
+          </article>
+          <article class="note">
+            <span class="note-icon" aria-hidden="true" id="note-icon-privacy"></span>
+            <h3>Local by design</h3>
+            <p>
+              Images are decoded, sampled, and quantized in this tab. No uploads, no analytics,
+              no server round-trip. Export as Kotlin, JSON, CSS, Android XML, or a Figma
+              variables bundle.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-brand">
+        <span class="brand-mark small" aria-hidden="true" id="footer-mark">
+          <i></i><i></i><i></i><i></i>
+        </span>
+        <div>
+          <strong>spec 2026</strong>
+          <span>A Material color studio for the 2026 spec.</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/Waxaranai/m3-spec2026" target="_blank" rel="noreferrer">GitHub</a>
+        <a
+          href="https://gist.github.com/Waxaranai/7f2da33dd05f474990349a4cc70d6e23"
+          target="_blank"
+          rel="noreferrer"
+        >Reference gist</a>
+        <a
+          href="https://github.com/material-foundation/material-color-utilities"
+          target="_blank"
+          rel="noreferrer"
+        >Material Color Utilities</a>
+        <a
+          href="https://github.com/microsoft/figma-variables-import"
+          target="_blank"
+          rel="noreferrer"
+        >Figma Variables Import</a>
+      </div>
+      <p class="footer-note">
+        Not affiliated with Google. Material Color Utilities is Apache-2.0 licensed.
+      </p>
+    </footer>
+
+    <input id="file-input" type="file" accept="image/*" hidden />
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span class="toast-icon" aria-hidden="true"></span>
+      <span id="toast-text"></span>
+    </div>
+
+    <noscript>
+      <div class="noscript">This generator needs JavaScript to quantize images and resolve HCT colors.</div>
+    </noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
