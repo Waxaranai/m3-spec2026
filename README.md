@@ -3,9 +3,9 @@
 **Live:** [waxaranai.github.io/m3-spec2026](https://waxaranai.github.io/m3-spec2026/)
 
 A static, browser-only studio that turns an image into a device-accurate Material 3
-**SPEC_2026** color scheme. Drop a wallpaper, pick a seed color, and inspect all 67 roles in
-light and dark, the six tonal palettes, the tertiary hue rotation, and production-ready
-exports.
+**SPEC_2026** color scheme, with a one-click switch to the original **SPEC_2021** roles and
+palette recipes. Drop a wallpaper, pick a seed color, and inspect all 67 roles in light and
+dark, the six tonal palettes, the tertiary hue rotation, and production-ready exports.
 
 The site itself is themed with the generated scheme, so the UI updates as you explore.
 
@@ -16,6 +16,8 @@ The site itself is themed with the generated scheme, so the UI updates as you ex
 - Resolves the scheme with [`@material/material-color-utilities`](https://github.com/material-foundation/material-color-utilities)
   0.4.0, including the SPEC_2025 role layer that Android uses for TonalSpot when SPEC_2026
   role definitions do not apply.
+- Switches between the 2026 request and the original 2021 spec. The 2021 mode restores the
+  2021 role definitions and palette recipes, including the +60° tertiary hue.
 - Adds the Android-only roles (`control_*`, `text_*`) from libmonet's `ColorScheme`.
 - Shows light/dark phone previews, all roles, all tonal palettes, and the tertiary hue
   rotation.
@@ -28,13 +30,19 @@ This is a color-scheme generator, not a wallpaper extractor that reproduces a sp
 device's private `WallpaperManager` pipeline. Image seeds use the public MCU quantizer and
 `Score`; a device may choose a slightly different seed from the same wallpaper.
 
-For the reference seed `#2eff2e`, TonalSpot output matches the
+For the reference seed `#2eff2e`, the default SPEC_2026 TonalSpot output matches the
 [MATERIAL_COLORSCHEME.md gist](https://gist.github.com/Waxaranai/7f2da33dd05f474990349a4cc70d6e23)
 role-for-role. The test suite locks those values in.
 
 SPEC_2026 dynamic-color role definitions currently apply to the CMF style. TonalSpot keeps
 the 2025 palette recipe and resolves roles through SPEC_2025, which is what the reference
 gist shows. The UI calls this out rather than pretending every style gained 2026 roles.
+
+The **Role spec** control switches to SPEC_2021. That uses MCU's 2021 palette recipes and
+role definitions, so the primary chroma, tertiary rotation, neutral chroma, and error
+palette change to the original 2021 values. It is a real spec switch, not a relabeling of
+the 2026 output. Exported files use `m3-spec2021-…` so they can sit next to `m3-spec2026-…`
+without collisions.
 
 ## Run locally
 
@@ -65,9 +73,15 @@ Unzip the bundle, open Microsoft's
 [Variables Import](https://github.com/microsoft/figma-variables-import) plugin in Figma, and
 drag all four JSON files into the plugin at once. The manifest creates:
 
-- `M3 Spec 2026` with real **Light** and **Dark** modes and 67 color variables.
-- `M3 palettes` with a **Tones** mode and primary, secondary, tertiary, neutral,
-  neutral-variant, and error tones.
+- `M3 Spec 2026` (or `M3 Spec 2021`) with real **Light** and **Dark** modes and 67 color
+  variables.
+- `M3 palettes 2026` (or `M3 palettes 2021`) with a **Tones** mode and primary, secondary,
+  tertiary, neutral, neutral-variant, and error tones.
+
+The collection names include the requested spec. To compare the 2021 and 2026 outputs in
+Figma, import each bundle into a separate Figma file: the plugin keys variables by name, so
+importing both specs into one file updates the existing variables instead of creating a
+parallel set. It also reads one manifest per run.
 
 Each role token also carries a web CSS code syntax such as
 `var(--md-sys-color-on-primary)`. The token format is DTCG (`$type: "color"`, `$value:

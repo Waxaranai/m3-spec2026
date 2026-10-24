@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Generate device-accurate Material 3 SPEC_2026 color schemes from any image.",
+  "description": "Generate device-accurate Material 3 SPEC_2026 color schemes from any image, with a SPEC_2021 comparison mode.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

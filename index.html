@@ -6,10 +6,10 @@
     <meta name="color-scheme" content="light dark" />
     <meta
       name="description"
-      content="Turn any image into a device-accurate Material 3 SPEC_2026 color scheme: 67 roles, light and dark, tonal palettes, and Kotlin, JSON, CSS, Android XML, or Figma variables exports."
+      content="Turn any image into a device-accurate Material 3 color scheme. Compare SPEC_2026 device resolution with the original SPEC_2021 roles and palettes, then export Kotlin, JSON, CSS, Android XML, or Figma variables."
     />
     <meta name="theme-color" content="#f9faf2" id="meta-theme-color" />
-    <title>Spec 2026 — Material color studio</title>
+    <title>Spec 2026 + 2021 — Material color studio</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" id="favicon" />
   </head>
   <body>
@@ -17,7 +17,7 @@
 
     <header class="site-header" id="top">
       <div class="header-inner">
-        <a class="brand" href="#top" aria-label="Spec 2026 home">
+        <a class="brand" href="#top" aria-label="Material color studio home">
           <span class="brand-mark" aria-hidden="true" id="brand-mark">
             <i></i><i></i><i></i><i></i>
           </span>
@@ -56,16 +56,17 @@
           <div class="hero-copy">
             <div class="eyebrow">
               <span class="live-dot" aria-hidden="true"></span>
-              Material 3 · SPEC_2026 · HCT
+              Material 3 · SPEC_2026 + 2021 · HCT
             </div>
             <h1 id="hero-title">
               One image.<br />
               <span class="gradient-text">A whole 2026 palette.</span>
             </h1>
             <p class="hero-lede">
-              Drop a photo, choose a seed, and generate the exact Material 3 scheme Android
-              resolves through libmonet. Light, dark, every role, every tonal palette — ready
-              for Kotlin, JSON, CSS, Android XML, or Figma variables.
+              Drop a photo, choose a seed, and generate the Material 3 scheme Android resolves
+              through libmonet — SPEC_2026 by default, or the original 2021 roles and palette
+              recipes. Light, dark, every role, every tonal palette — ready for Kotlin, JSON,
+              CSS, Android XML, or Figma variables.
             </p>
             <div class="hero-actions">
               <button class="btn btn-filled" id="hero-upload-btn" type="button">
@@ -98,7 +99,7 @@
               <div class="ticket-rows" id="hero-ticket-rows"></div>
               <div class="ticket-footer">
                 <span>SchemeTonalSpot</span>
-                <span class="mono">SPEC_2026</span>
+                <span class="mono" id="ticket-spec">SPEC_2026</span>
               </div>
             </div>
             <div class="hero-palette" id="hero-palette"></div>
@@ -143,12 +144,21 @@
               </label>
 
               <div class="field">
+                <span class="field-label">Role spec</span>
+                <div class="segmented" id="spec-toggle" role="group" aria-label="Material role spec">
+                  <button type="button" data-spec="2026" class="is-active">2026</button>
+                  <button type="button" data-spec="2021">2021</button>
+                </div>
+                <small id="spec-desc">2026 resolution: classic styles use 2025 roles; legacy styles stay on 2021.</small>
+              </div>
+
+              <div class="field">
                 <span class="field-label">Platform</span>
                 <div class="segmented" id="platform-toggle" role="group" aria-label="Platform">
                   <button type="button" data-platform="phone" class="is-active">Phone</button>
                   <button type="button" data-platform="watch">Watch</button>
                 </div>
-                <small>2025 roles use platform-specific tones.</small>
+                <small>Tone recipes vary by platform and role spec.</small>
               </div>
 
               <label class="field range-field" for="contrast-range">
@@ -206,7 +216,7 @@
             <span class="section-kicker">04 — Palettes</span>
             <h2 id="palettes-title">The tonal palettes</h2>
           </div>
-          <p>Click any tone to copy its hex. The tertiary hue is rotated, not simply seed + 60°.</p>
+          <p>Click any tone to copy its hex. Compare the 2021 +60° tertiary with the 2026 piecewise rotation.</p>
         </div>
         <div class="palette-wrap panel">
           <div class="palette-scroll" id="palette-table"></div>
@@ -240,7 +250,7 @@
         <div class="section-head">
           <div>
             <span class="section-kicker">Good to know</span>
-            <h2 id="notes-title">The 2026 details</h2>
+            <h2 id="notes-title">The spec details</h2>
           </div>
         </div>
         <div class="note-grid">
@@ -250,16 +260,17 @@
             <p>
               libmonet only applies the SPEC_2026 dynamic-color role spec to the CMF style.
               TonalSpot falls back to SPEC_2025 roles, while keeping the 2025 palette rules.
-              That is exactly what the reference gist shows.
+              That is exactly what the reference gist shows. Switch Role spec to 2021 for the
+              original roles and palette recipes.
             </p>
           </article>
           <article class="note">
             <span class="note-icon" aria-hidden="true" id="note-icon-tertiary"></span>
-            <h3>Tertiary is not +60°</h3>
+            <h3>Tertiary changes by spec</h3>
             <p>
-              The 2025/2026 TonalSpot tertiary uses a piecewise hue rotation. For the loaded
-              seed it lands on <strong id="note-tertiary-value">110.71°</strong>, which is why a
-              green wallpaper produces yellow-green, not cyan.
+              SPEC_2026 TonalSpot uses a piecewise hue rotation, which can turn a green seed
+              yellow-green instead of cyan. SPEC_2021 uses the original +60° hue offset. Switch
+              Role spec to compare the two recipes directly.
             </p>
           </article>
           <article class="note">
@@ -282,7 +293,7 @@
         </span>
         <div>
           <strong>spec 2026</strong>
-          <span>A Material color studio for the 2026 spec.</span>
+          <span>A Material color studio for the 2021 + 2026 specs.</span>
         </div>
       </div>
       <div class="footer-links">

@@ -18,6 +18,7 @@ import {
   type Platform,
   type RoleMap,
   type Scheme,
+  type SpecKey,
   type StyleKey,
 } from './color/engine';
 import {
@@ -51,6 +52,7 @@ interface ImageState extends LoadedImage {
 interface State {
   seedArgb: number;
   style: StyleKey;
+  spec: SpecKey;
   contrast: number;
   platform: Platform;
   theme: Mode;
@@ -98,6 +100,8 @@ const themeButton = $<HTMLButtonElement>('#theme-btn');
 const shareButton = $<HTMLButtonElement>('#share-btn');
 const styleSelect = $<HTMLSelectElement>('#style-select');
 const styleDescription = $<HTMLElement>('#style-desc');
+const specToggle = $<HTMLDivElement>('#spec-toggle');
+const specDescription = $<HTMLElement>('#spec-desc');
 const roleSpecBadge = $<HTMLElement>('#role-spec-badge');
 const platformToggle = $<HTMLDivElement>('#platform-toggle');
 const contrastRange = $<HTMLInputElement>('#contrast-range');
@@ -130,6 +134,7 @@ function loadState(): State {
   const defaults: State = {
     seedArgb: argbFromHex(DEMO_SEED),
     style: 'tonal',
+    spec: '2026',
     contrast: 0,
     platform: 'phone',
     theme:
@@ -155,6 +160,7 @@ function loadState(): State {
   if (stored) {
     if (typeof stored.seedArgb === 'number') next.seedArgb = stored.seedArgb;
     if (stored.style && STYLE_BY_KEY[stored.style]) next.style = stored.style;
+    if (stored.spec === '2021' || stored.spec === '2026') next.spec = stored.spec;
     if (typeof stored.contrast === 'number') next.contrast = clamp(stored.contrast, -1, 1);
     if (stored.platform === 'watch' || stored.platform === 'phone') next.platform = stored.platform;
     if (stored.theme === 'light' || stored.theme === 'dark') next.theme = stored.theme;
@@ -175,6 +181,11 @@ function loadState(): State {
   const styleParam = params.get('style');
   if (styleParam && STYLE_BY_KEY[styleParam as StyleKey]) {
     next.style = styleParam as StyleKey;
+  }
+
+  const specParam = params.get('spec');
+  if (specParam === '2021' || specParam === '2026') {
+    next.spec = specParam;
   }
 
   const contrastParam = params.get('contrast');
@@ -222,8 +233,8 @@ function populateStyles(): void {
       .join('')}</optgroup>`;
 
   styleSelect.innerHTML = [
-    group('Classic styles · SPEC_2025 roles', ['2025']),
-    group('Legacy styles · SPEC_2021 roles', ['2021']),
+    group('Classic styles', ['2025']),
+    group('Legacy styles', ['2021']),
   ].join('');
 }
 
@@ -261,6 +272,17 @@ function attachEvents(): void {
     if (STYLE_BY_KEY[value]) {
       state.style = value;
       scheduleRender();
+    }
+  });
+
+  specToggle.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const button = target.closest<HTMLElement>('[data-spec]');
+    const spec = button?.dataset.spec;
+    if (spec === '2021' || spec === '2026') {
+      state.spec = spec;
+      renderAll();
     }
   });
 
@@ -585,11 +607,12 @@ function scheduleRender(): void {
 }
 
 function currentScheme(): Scheme {
-  const key = `${state.seedArgb}|${state.style}|${state.contrast}|${state.platform}`;
+  const key = `${state.seedArgb}|${state.style}|${state.spec}|${state.contrast}|${state.platform}`;
   if (!cachedScheme || key !== cachedSchemeKey) {
     cachedScheme = generateScheme({
       seedArgb: state.seedArgb,
       style: state.style,
+      spec: state.spec,
       contrast: state.contrast,
       platform: state.platform,
     });
@@ -673,6 +696,7 @@ function renderHero(scheme: Scheme): void {
     .join('');
 
   $<HTMLElement>('#hero-sticker').textContent = `SPEC_${scheme.roleSpec} roles`;
+  $<HTMLElement>('#ticket-spec').textContent = `SPEC_${scheme.requestedSpec}`;
   const footerStyle = document.querySelector<HTMLElement>('.ticket-footer span:first-child');
   if (footerStyle) footerStyle.textContent = `Scheme${scheme.styleLabel.replace(/[^a-z]/gi, '')}`;
 
@@ -688,8 +712,22 @@ function renderControls(scheme: Scheme): void {
   styleSelect.value = state.style;
   styleDescription.textContent = scheme.styleDescription;
   roleSpecBadge.textContent = `SPEC_${scheme.roleSpec} roles`;
-  roleSpecBadge.title = `Requested SPEC_2026 → resolved SPEC_${scheme.roleSpec} for ${scheme.styleLabel}`;
-  roleSpecBadge.dataset.spec = scheme.roleSpec;
+  roleSpecBadge.title =
+    scheme.requestedSpec === '2021'
+      ? 'SPEC_2021 roles and original 2021 palette recipes'
+      : `Requested SPEC_2026 → resolved SPEC_${scheme.roleSpec} for ${scheme.styleLabel}`;
+  roleSpecBadge.dataset.roleSpec = scheme.roleSpec;
+
+  specDescription.textContent =
+    state.spec === '2021'
+      ? 'Original 2021 roles and palette recipes, including the +60° tertiary hue.'
+      : '2026 resolution: classic styles use 2025 roles; legacy styles stay on 2021.';
+
+  for (const button of specToggle.querySelectorAll<HTMLElement>('[data-spec]')) {
+    const active = button.dataset.spec === state.spec;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-pressed', String(active));
+  }
 
   for (const button of platformToggle.querySelectorAll<HTMLElement>('[data-platform]')) {
     const active = button.dataset.platform === state.platform;
@@ -1026,17 +1064,51 @@ function renderTertiaryNote(scheme: Scheme): void {
     (segment) => seedHue >= segment.from && seedHue < segment.to,
   );
   const isTonal = scheme.style === 'tonal';
+  const is2021 = scheme.requestedSpec === '2021';
 
-  const description = isTonal && active
-    ? `Seed hue <strong>${seedHue}°</strong> falls in <code>[${active.from}°, ${active.to}°)</code>, so the rotation is <strong>${formatRotation(active.rotation)}</strong>. Tertiary lands at <strong>${tertiaryHue}°</strong> with chroma <strong>${tertiary?.chroma}</strong>.`
-    : `This style (${scheme.styleLabel}) has its own tertiary recipe. The table below describes the TonalSpot piecewise rotation, where a green seed produces yellow-green rather than cyan.`;
+  let description: string;
+  let rotationRows: string;
 
-  const rotationRows = TERTIARY_SEGMENTS.map(
-    (segment) => `<div class="rotation-row${isTonal && segment === active ? ' is-active' : ''}">
-      <span class="mono">[${segment.from}°, ${segment.to}°)</span>
-      <strong>${formatRotation(segment.rotation)}</strong>
-    </div>`,
-  ).join('');
+  if (is2021) {
+    description = isTonal
+      ? `The original 2021 TonalSpot recipe rotates the seed hue by <strong>+60°</strong> and uses chroma <strong>${tertiary?.chroma}</strong>. That is the classic Material You tertiary; the 2026 request replaces it with a piecewise rotation.`
+      : `The 2021 ${scheme.styleLabel} recipe derives tertiary independently. It lands at <strong>${tertiaryHue}°</strong> with chroma <strong>${tertiary?.chroma}</strong>.`;
+    rotationRows = isTonal
+      ? `<div class="rotation-row is-active">
+          <span class="mono">TonalSpot 2021</span>
+          <strong>+60°</strong>
+        </div>
+        <div class="rotation-row">
+          <span class="mono">Tertiary chroma</span>
+          <strong>${tertiary?.chroma}</strong>
+        </div>
+        <div class="rotation-row">
+          <span class="mono">Role spec</span>
+          <strong>SPEC_2021</strong>
+        </div>`
+      : `<div class="rotation-row is-active">
+          <span class="mono">${scheme.styleLabel} 2021</span>
+          <strong>own recipe</strong>
+        </div>
+        <div class="rotation-row">
+          <span class="mono">Tertiary hue</span>
+          <strong>${tertiaryHue}°</strong>
+        </div>
+        <div class="rotation-row">
+          <span class="mono">Tertiary chroma</span>
+          <strong>${tertiary?.chroma}</strong>
+        </div>`;
+  } else {
+    description = isTonal && active
+      ? `Seed hue <strong>${seedHue}°</strong> falls in <code>[${active.from}°, ${active.to}°)</code>, so the rotation is <strong>${formatRotation(active.rotation)}</strong>. Tertiary lands at <strong>${tertiaryHue}°</strong> with chroma <strong>${tertiary?.chroma}</strong>.`
+      : `This style (${scheme.styleLabel}) has its own tertiary recipe. The table below describes the TonalSpot piecewise rotation, where a green seed produces yellow-green rather than cyan.`;
+    rotationRows = TERTIARY_SEGMENTS.map(
+      (segment) => `<div class="rotation-row${isTonal && segment === active ? ' is-active' : ''}">
+        <span class="mono">[${segment.from}°, ${segment.to}°)</span>
+        <strong>${formatRotation(segment.rotation)}</strong>
+      </div>`,
+    ).join('');
+  }
 
   tertiaryNote.innerHTML = `<div class="tertiary-copy">
       <span class="mini-label">Why this tertiary?</span>
@@ -1201,6 +1273,7 @@ function syncUrl(scheme: Scheme): void {
   const params = new URLSearchParams();
   params.set('seed', scheme.seedHex.slice(1));
   if (state.style !== 'tonal') params.set('style', state.style);
+  if (state.spec !== '2026') params.set('spec', state.spec);
   if (state.contrast !== 0) params.set('contrast', state.contrast.toFixed(2));
   if (state.platform !== 'phone') params.set('platform', state.platform);
   if (state.theme !== 'light') params.set('theme', state.theme);
@@ -1208,7 +1281,7 @@ function syncUrl(scheme: Scheme): void {
   if (url.href !== window.location.href) {
     window.history.replaceState(null, '', url);
   }
-  document.title = `${scheme.seedHex} · Spec 2026`;
+  document.title = `${scheme.seedHex} · Spec ${scheme.requestedSpec}`;
 }
 
 function persist(): void {
@@ -1220,6 +1293,7 @@ function persist(): void {
         seedArgb: state.seedArgb,
         seedHex: scheme.seedHex,
         style: state.style,
+        spec: state.spec,
         contrast: state.contrast,
         platform: state.platform,
         theme: state.theme,

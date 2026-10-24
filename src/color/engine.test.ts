@@ -2,12 +2,20 @@ import { strFromU8, unzipSync } from 'fflate';
 import { describe, expect, it } from 'vitest';
 
 import { STYLE_DEFS, generateScheme } from './engine';
-import { buildFigmaBundle, figmaBundleFiles } from './export';
+import { buildFigmaBundle, figmaBundleFiles, fileStem, serialize } from './export';
 import { ROLE_DEFS } from './roles';
 
 const scheme = generateScheme({
   seedArgb: 0xff2eff2e,
   style: 'tonal',
+  contrast: 0,
+  platform: 'phone',
+});
+
+const scheme2021 = generateScheme({
+  seedArgb: 0xff2eff2e,
+  style: 'tonal',
+  spec: '2021',
   contrast: 0,
   platform: 'phone',
 });
@@ -147,7 +155,19 @@ function paletteTone(key: string, tone: number): string {
   return entry.hex;
 }
 
+function paletteTone2021(key: string, tone: number): string {
+  const palette = scheme2021.palettes.find((entry) => entry.key === key);
+  const entry = palette?.tones.find((value) => value.tone === tone);
+  if (!entry) throw new Error(`Missing ${key} tone ${tone}`);
+  return entry.hex;
+}
+
 describe('SPEC_2026 TonalSpot for seed #2eff2e', () => {
+  it('requests SPEC_2026 and resolves the device role spec', () => {
+    expect(scheme.requestedSpec).toBe('2026');
+    expect(scheme.roleSpec).toBe('2025');
+  });
+
   it('matches the reference gist role values in light mode', () => {
     for (const [role, hex] of Object.entries(gistLight)) {
       expect(scheme.light[role]?.hex, role).toBe(hex);
@@ -238,7 +258,7 @@ describe('Figma variables export', () => {
       Light: ['light.tokens.json'],
       Dark: ['dark.tokens.json'],
     });
-    expect(manifest.collections['M3 palettes'].modes).toEqual({
+    expect(manifest.collections['M3 palettes 2026'].modes).toEqual({
       Tones: ['palettes.tokens.json'],
     });
   });
@@ -292,5 +312,66 @@ describe('Figma variables export', () => {
       collections: Record<string, unknown>;
     };
     expect(unzippedManifest.collections).toHaveProperty('M3 Spec 2026');
+  });
+});
+
+describe('SPEC_2021 TonalSpot', () => {
+  it('uses the original 2021 roles and palette recipes', () => {
+    expect(scheme2021.requestedSpec).toBe('2021');
+    expect(scheme2021.roleSpec).toBe('2021');
+
+    const [primary, secondary, tertiary, neutral, neutralVariant, error] =
+      scheme2021.palettes;
+    expect(primary).toMatchObject({ hue: 142.71, chroma: 36 });
+    expect(secondary).toMatchObject({ hue: 142.71, chroma: 16 });
+    expect(tertiary).toMatchObject({ hue: 202.71, chroma: 24 });
+    expect(neutral).toMatchObject({ hue: 142.71, chroma: 6 });
+    expect(neutralVariant).toMatchObject({ hue: 142.71, chroma: 8 });
+    expect(error).toMatchObject({ hue: 25, chroma: 84 });
+    expect(scheme2021.light.primary.hex).not.toBe(scheme.light.primary.hex);
+    expect(scheme2021.light.tertiary.hex).not.toBe(scheme.light.tertiary.hex);
+  });
+
+  it('resolves Android-only roles with the 2021 mappings', () => {
+    expect(scheme2021.light.control_activated.hex).toBe(paletteTone2021('primary', 90));
+    expect(scheme2021.dark.control_activated.hex).toBe(paletteTone2021('primary', 30));
+    expect(scheme2021.light.control_normal.hex).toBe(
+      paletteTone2021('neutral_variant', 30),
+    );
+    expect(scheme2021.dark.control_normal.hex).toBe(
+      paletteTone2021('neutral_variant', 80),
+    );
+    expect(scheme2021.light.text_primary_inverse.hex).toBe(
+      paletteTone2021('neutral', 90),
+    );
+    expect(scheme2021.dark.text_primary_inverse.hex).toBe(
+      paletteTone2021('neutral', 10),
+    );
+    expect(scheme2021.light.text_secondary_and_tertiary_inverse.hex).toBe(
+      paletteTone2021('neutral_variant', 80),
+    );
+  });
+
+  it('labels exports as SPEC_2021 and keeps Figma collections distinct', () => {
+    const json = JSON.parse(serialize(scheme2021, 'json')) as {
+      spec: { requested: string; roleSpec: string };
+    };
+    expect(json.spec.requested).toBe('SPEC_2021');
+    expect(json.spec.roleSpec).toBe('SPEC_2021');
+    expect(fileStem(scheme2021)).toBe('m3-spec2021-2eff2e-tonal');
+
+    const files = figmaBundleFiles(scheme2021);
+    const manifest = JSON.parse(files['manifest.json']) as {
+      collections: Record<string, { modes: Record<string, string[]> }>;
+    };
+    expect(manifest.collections['M3 Spec 2021'].modes).toEqual({
+      Light: ['light.tokens.json'],
+      Dark: ['dark.tokens.json'],
+    });
+    expect(manifest.collections['M3 palettes 2021'].modes).toEqual({
+      Tones: ['palettes.tokens.json'],
+    });
+    expect(files['README.txt']).toContain('requested SPEC_2021');
+    expect(files['light.tokens.json']).toContain('SPEC_2021');
   });
 });

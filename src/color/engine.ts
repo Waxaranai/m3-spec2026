@@ -33,6 +33,7 @@ export type StyleKey =
   | 'fruit';
 
 export type RoleSpec = '2021' | '2025';
+export type SpecKey = '2021' | '2026';
 
 export interface HctTriple {
   hue: number;
@@ -70,7 +71,9 @@ export interface Scheme {
   styleLabel: string;
   styleDescription: string;
   variant: string;
-  /** The role spec that Android resolves for this style when SPEC_2026 is requested. */
+  /** The spec the user asked for: 2026 device resolution or the original 2021 spec. */
+  requestedSpec: SpecKey;
+  /** The role spec actually used after Android/MCU fallbacks. */
   roleSpec: RoleSpec;
   platform: Platform;
   contrast: number;
@@ -85,6 +88,8 @@ export interface SchemeOptions {
   style: StyleKey;
   contrast: number;
   platform: Platform;
+  /** Defaults to 2026, which resolves to 2025/2021 depending on the style. */
+  spec?: SpecKey;
 }
 
 type SchemeConstructor = new (
@@ -331,14 +336,19 @@ function buildPalettes(scheme: DynamicScheme): TonalPaletteInfo[] {
 }
 
 /**
- * Generates the scheme Android produces when ThemePicker asks libmonet for
- * SPEC_2026 with the given style. Android only uses the 2026 dynamic-color
- * spec for the CMF style; TonalSpot (and the other classic styles) fall back
- * to SPEC_2025 roles, while still using the 2025 tonal-spot palette rules.
+ * Generates a scheme for the requested spec.
+ *
+ * The default 2026 request mirrors ThemePicker asking libmonet for SPEC_2026:
+ * Android only uses the 2026 dynamic-color spec for the CMF style, so
+ * TonalSpot (and the other classic styles) fall back to SPEC_2025 roles while
+ * keeping the 2025 palette rules. Passing spec: '2021' selects the original
+ * 2021 role definitions and palette recipes instead.
  */
 export function generateScheme(options: SchemeOptions): Scheme {
   const style = STYLE_BY_KEY[options.style] ?? STYLE_BY_KEY.tonal;
   const contrast = Math.min(1, Math.max(-1, options.contrast));
+  const requestedSpec: SpecKey = options.spec === '2021' ? '2021' : '2026';
+  const roleSpec: RoleSpec = requestedSpec === '2021' ? '2021' : style.roleSpec;
   const requestedHct = Hct.fromInt(options.seedArgb);
   const lowChromaFallback =
     style.key !== 'content' && requestedHct.chroma < MIN_CHROMA;
@@ -348,13 +358,7 @@ export function generateScheme(options: SchemeOptions): Scheme {
 
   const ctor = style.ctor;
   const make = (isDark: boolean) =>
-    new ctor(
-      effectiveHct,
-      isDark,
-      contrast,
-      style.roleSpec,
-      options.platform,
-    );
+    new ctor(effectiveHct, isDark, contrast, roleSpec, options.platform);
 
   return {
     seedHex: argbToHex(options.seedArgb),
@@ -366,7 +370,8 @@ export function generateScheme(options: SchemeOptions): Scheme {
     styleLabel: style.label,
     styleDescription: style.description,
     variant: style.variant,
-    roleSpec: style.roleSpec,
+    requestedSpec,
+    roleSpec,
     platform: options.platform,
     contrast,
     light: buildRoleMap(make(false)),

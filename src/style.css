@@ -1393,7 +1393,7 @@ pre {
   white-space: nowrap;
 }
 
-.badge[data-spec='2021'] {
+.badge[data-role-spec='2021'] {
   border-color: color-mix(in srgb, var(--md-tertiary) 30%, transparent);
   background: var(--md-tertiary-container);
   color: var(--md-on-tertiary-container);
