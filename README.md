@@ -1,5 +1,7 @@
 # Spec 2026 — Material color studio
 
+**Live:** [waxaranai.github.io/m3-spec2026](https://waxaranai.github.io/m3-spec2026/)
+
 A static, browser-only studio that turns an image into a device-accurate Material 3
 **SPEC_2026** color scheme. Drop a wallpaper, pick a seed color, and inspect all 67 roles in
 light and dark, the six tonal palettes, the tertiary hue rotation, and production-ready
